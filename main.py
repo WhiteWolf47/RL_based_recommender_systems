@@ -124,7 +124,7 @@ def topic_modeling(model,X):
         dictionary = Dictionary(Tokenized_Doc)
         corpus = [dictionary.doc2bow(tokens) for tokens in Tokenized_Doc]
         model_ = HdpModel(corpus, id2word = dictionary)
-        model_.fit(X)
+        #model_.fit(X)
 
     return model_
 
@@ -163,6 +163,8 @@ def Visualize_clusters(model_, title):
 movie_df['Genre_improved'] = Data_Cleaning(movie_df['Genre'])
 movie_df['Genre_grouped'] = group_genre(movie_df['Genre_improved'])
 movie_df = movie_df[movie_df['Genre_grouped']!='Default']# Defalut categories are removed
+print(movie_df.shape)
+print(movie_df.head())
 processed_data = pre_Process_data(movie_df['Plot'])
 
 unique, counts = np.unique(movie_df['Genre_grouped'], return_counts=True)
@@ -172,3 +174,8 @@ for x,y in zip(unique,counts):
 movie_df['Genre_grouped'] = movie_df['Genre_grouped'].astype("category").cat.codes
 
 X, vectorizer = Vectorization(processed_data)
+
+#HDP model
+model_hdp = topic_modeling('HDP',X)
+print("Most imp words : ", Get_MostImportant_words(model_HDP, vectorizer))
+Visualize_clusters(model_HDP, "Clustering for HDP Model")
